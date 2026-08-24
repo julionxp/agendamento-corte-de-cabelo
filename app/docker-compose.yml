@@ -1,0 +1,23 @@
+name: agendamento_corte_de_cabelo-db
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: agendamento_corte_de_cabelo-db
+
+    env_file:
+      - .env
+
+    environment:
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DB}
+
+    ports:
+      - "${PORT}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

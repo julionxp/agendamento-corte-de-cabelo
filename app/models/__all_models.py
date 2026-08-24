@@ -1,0 +1,4 @@
+from models.agendamento_model import AgendamentoModel
+from models.barbeiro_model import BarbeiroModel
+from models.servico_model import ServicoModel
+from models.usuario_model import UsuarioModel
