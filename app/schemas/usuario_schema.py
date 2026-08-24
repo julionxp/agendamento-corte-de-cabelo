@@ -1,13 +1,12 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class UsuarioSchema(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     nome: str
-    email: str
+    email: EmailStr
     telefone: str
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

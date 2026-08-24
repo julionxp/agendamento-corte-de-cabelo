@@ -1,12 +1,12 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from datetime import datetime
 
 
 class BarbeiroSchema(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     data_hora_inicio: datetime
     data_hora_fim: datetime
     confirmado: bool
@@ -15,5 +15,4 @@ class BarbeiroSchema(BaseModel):
     barbeiro_id: int
     servico_id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
