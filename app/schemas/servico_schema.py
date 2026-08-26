@@ -12,3 +12,9 @@ class ServicoSchema(BaseModel):
     duracao_minutos: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ServicoUpdateSchema(BaseModel):
+    nome_servico: Optional[str] = None
+    preco: Optional[Decimal] = None
+    duracao_minutos: Optional[int] = None

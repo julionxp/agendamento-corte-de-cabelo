@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from models.servico_model import ServicoModel
-from schemas.servico_schema import ServicoSchema
+from schemas.servico_schema import ServicoSchema, ServicoUpdateSchema
 
 from core.deps import get_session
 
@@ -39,41 +39,41 @@ async def get_servicos(db: AsyncSession = Depends(get_session)):
         return servicos
 
 
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=List[ServicoSchema])
-async def post_servicos(servicos: List[ServicoSchema], db: AsyncSession = Depends(get_session)):
-    novos_servicos = [
-        ServicoModel(
-            nome_servico=servico.nome_servico,
-            preco=servico.preco,
-            duracao_minutos=servico.duracao_minutos,
-        )
-        for servico in servicos
-    ]
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=ServicoSchema)
+async def post_servicos(servico: ServicoSchema, db: AsyncSession = Depends(get_session)):
+    novo_servico = ServicoModel(
+        nome_servico=servico.nome_servico,
+        preco=servico.preco,
+        duracao_minutos=servico.duracao_minutos,
+    )
 
-    db.add_all(novos_servicos)
+    db.add(novo_servico)
     await db.commit()
 
-    return novos_servicos
+    return novo_servico
 
 
-@router.put('/{servico_id}', status_code=status.HTTP_200_OK, response_model=ServicoSchema)
-async def put_servico(servico_id: int, servico: ServicoSchema, db: AsyncSession = Depends(get_session)):
+@router.put('/{servico_id}', status_code=status.HTTP_200_OK, response_model=ServicoUpdateSchema)
+async def put_servico(servico_id: int, servico: ServicoUpdateSchema, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(ServicoModel).filter(ServicoModel.id == servico_id)
         result = await session.execute(query)
         servico_up = result.scalar_one_or_none()
 
+        if not servico_up:
+            raise HTTPException(detail='Serviço não encontrado', status_code=status.HTTP_404_NOT_FOUND)
+
         if servico_up:
-            servico_up.nome_servico = servico.nome_servico
-            servico_up.preco = servico.preco
-            servico_up.duracao_minutos = servico.duracao_minutos
+            if servico.nome_servico is not None:
+                servico_up.nome_servico = servico.nome_servico
+            if servico.preco is not None:
+                servico_up.preco = servico.preco
+            if servico.duracao_minutos is not None:
+                servico_up.duracao_minutos = servico.duracao_minutos
 
             await session.commit()
 
             return servico_up
-
-        else:
-            raise HTTPException(detail='Serviço não encontrado', status_code=status.HTTP_404_NOT_FOUND)
 
 
 @router.delete('/{servico_id}', status_code=status.HTTP_204_NO_CONTENT)
