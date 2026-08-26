@@ -1,12 +1,12 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class BarbeiroSchema(BaseModel):
     id: Optional[int] = None
     nome: str
-    email: str
+    email: EmailStr
     telefone: str
 
     model_config = ConfigDict(from_attributes=True)
