@@ -40,7 +40,7 @@ async def get_barbeiros(db: AsyncSession = Depends(get_session)):
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=BarbeiroSchema)
-async def post_barbeiros(barbeiro: BarbeiroSchema, db: AsyncSession = Depends(get_session)):
+async def post_barbeiro(barbeiro: BarbeiroSchema, db: AsyncSession = Depends(get_session)):
     novo_barbeiro = BarbeiroModel(
         nome=barbeiro.nome,
         email=barbeiro.email,

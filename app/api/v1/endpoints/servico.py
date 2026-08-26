@@ -40,7 +40,7 @@ async def get_servicos(db: AsyncSession = Depends(get_session)):
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=ServicoSchema)
-async def post_servicos(servico: ServicoSchema, db: AsyncSession = Depends(get_session)):
+async def post_servico(servico: ServicoSchema, db: AsyncSession = Depends(get_session)):
     novo_servico = ServicoModel(
         nome_servico=servico.nome_servico,
         preco=servico.preco,
