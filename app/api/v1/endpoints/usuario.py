@@ -41,7 +41,7 @@ async def get_usuarios(db: AsyncSession = Depends(get_session)):
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=UsuarioSchema)
-async def post_usuarios(usuario: UsuarioSchema, db: AsyncSession = Depends(get_session)):
+async def post_usuario(usuario: UsuarioSchema, db: AsyncSession = Depends(get_session)):
     novo_usuario = UsuarioModel(
             nome=usuario.nome,
             email=usuario.email,
