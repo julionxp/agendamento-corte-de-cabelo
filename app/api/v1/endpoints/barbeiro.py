@@ -16,7 +16,6 @@ from core.deps import get_session
 router = APIRouter()
 
 
-
 @router.get('/{barbeiro_id}', status_code=status.HTTP_200_OK, response_model=BarbeiroSchema)
 async def get_barbeiro(barbeiro_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
@@ -40,21 +39,18 @@ async def get_barbeiros(db: AsyncSession = Depends(get_session)):
         return barbeiros
 
 
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=List[BarbeiroSchema])
-async def post_barbeiros(barbeiros: List[BarbeiroSchema], db: AsyncSession = Depends(get_session)):
-    novos_barbeiros = [
-        BarbeiroModel(
-            nome=barbeiro.nome,
-            email=barbeiro.email,
-            telefone=barbeiro.telefone,
-        )
-        for barbeiro in barbeiros
-    ]
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=BarbeiroSchema)
+async def post_barbeiros(barbeiro: BarbeiroSchema, db: AsyncSession = Depends(get_session)):
+    novo_barbeiro = BarbeiroModel(
+        nome=barbeiro.nome,
+        email=barbeiro.email,
+        telefone=barbeiro.telefone,
+    )
 
-    db.add_all(novos_barbeiros)
+    db.add(novo_barbeiro)
     await db.commit()
 
-    return novos_barbeiros
+    return novo_barbeiro
 
 
 @router.put('/{barbeiro_id}', status_code=status.HTTP_200_OK, response_model=BarbeiroUpdateSchema)
