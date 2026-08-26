@@ -9,7 +9,7 @@ services:
       - .env
 
     environment:
-      POSTGRES_USER: ${USER}
+      POSTGRES_USER: '${USER}'
       POSTGRES_PASSWORD: ${PASSWORD}
       POSTGRES_DB: ${DB}
 

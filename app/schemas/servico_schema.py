@@ -1,13 +1,20 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+
+from decimal import Decimal
 
 
 class ServicoSchema(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     nome_servico: str
-    preco: float
+    preco: Decimal
     duracao_minutos: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ServicoUpdateSchema(BaseModel):
+    nome_servico: Optional[str] = None
+    preco: Optional[Decimal] = None
+    duracao_minutos: Optional[int] = None

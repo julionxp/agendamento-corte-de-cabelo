@@ -1,19 +1,32 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from datetime import datetime
 
 
-class BarbeiroSchema(BaseModel):
-    id: Optional[int]
+class AgendamentoSchema(BaseModel):
     data_hora_inicio: datetime
-    data_hora_fim: datetime
-    confirmado: bool
 
     usuario_id: int
     barbeiro_id: int
     servico_id: int
 
-    class Config:
-        orm_mode = True
+
+class AgendamentoSchemaBase(BaseModel):
+    id: Optional[int] = None
+    data_hora_inicio: datetime
+
+    usuario_id: int
+    barbeiro_id: int
+    servico_id: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AgendamentoUpdateSchema(BaseModel):
+    data_hora_inicio: Optional[datetime] = None
+    confirmado: Optional[bool] = None
+
+    barbeiro_id: Optional[int] = None
+    servico_id: Optional[int] = None
