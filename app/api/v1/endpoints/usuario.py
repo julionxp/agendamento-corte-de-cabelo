@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from models.usuario_model import UsuarioModel
-from schemas.usuario_schema import UsuarioSchema
+from schemas.usuario_schema import UsuarioSchema, UsuarioUpdateSchema
 
 from core.deps import get_session
 
@@ -40,41 +40,41 @@ async def get_usuarios(db: AsyncSession = Depends(get_session)):
         return usuarios
 
 
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=List[UsuarioSchema])
-async def post_usuarios(usuarios: List[UsuarioSchema], db: AsyncSession = Depends(get_session)):
-    novos_usuarios = [
-        UsuarioModel(
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=UsuarioSchema)
+async def post_usuarios(usuario: UsuarioSchema, db: AsyncSession = Depends(get_session)):
+    novo_usuario = UsuarioModel(
             nome=usuario.nome,
             email=usuario.email,
             telefone=usuario.telefone,
         )
-        for usuario in usuarios
-    ]
 
-    db.add_all(novos_usuarios)
+    db.add(novo_usuario)
     await db.commit()
 
-    return novos_usuarios
+    return novo_usuario
 
 
-@router.put('/{usuario_id}', status_code=status.HTTP_200_OK, response_model=UsuarioSchema)
-async def put_usuario(usuario_id: int, usuario: UsuarioSchema, db: AsyncSession = Depends(get_session)):
+@router.put('/{usuario_id}', status_code=status.HTTP_200_OK, response_model=UsuarioUpdateSchema)
+async def put_usuario(usuario_id: int, usuario: UsuarioUpdateSchema, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         result = await session.execute(query)
         usuario_up = result.scalar_one_or_none()
 
+        if not usuario_up:
+            raise HTTPException(detail='Usuário não encontrado', status_code=status.HTTP_404_NOT_FOUND)
+
         if usuario_up:
-            usuario_up.nome = usuario.nome
-            usuario_up.email = usuario.email
-            usuario_up.telefone = usuario.telefone
+            if usuario.nome is not None:
+                usuario_up.nome = usuario.nome
+            if usuario.email is not None:
+                usuario_up.email = usuario.email
+            if usuario.telefone is not None:
+                usuario_up.telefone = usuario.telefone
 
             await session.commit()
 
             return usuario_up
-
-        else:
-            raise HTTPException(detail='Usuário não encontrado', status_code=status.HTTP_404_NOT_FOUND)
 
 
 @router.delete('/{usuario_id}', status_code=status.HTTP_204_NO_CONTENT)
