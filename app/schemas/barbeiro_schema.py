@@ -10,3 +10,9 @@ class BarbeiroSchema(BaseModel):
     telefone: str
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class BarbeiroUpdateSchema(BaseModel):
+    nome: Optional[str] = None
+    email: Optional[EmailStr] = None
+    telefone: Optional[str] = None
